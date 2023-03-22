@@ -50,9 +50,26 @@ The syntax for the other datasets is similar.
 
 <p align="justify">
 Detailed information about $A^5$ and code usage can be found in our CVPR paper. We also reccommend reading the related supplementary material for more details on the $A^5$ training recipes and the typical usage scenarios. A brief description of the recipes and usage scenarios is anyway given here.
+
+- Offline data robustification, known ground truth, legacy classifier ($A^5/O$):
+
+- On-the-fly data robustification, unknown ground truth, legacy classifier ($A^5/R$):
+
+- On-the-fly data robustification, unknown ground truth, re-trained classifier ($A^5/RC$):
+
+- Offline physical object robustification, known ground truth, legacy classifier ($A^5/P$):
+
+- Offline physical object robustification, known ground truth, re-trained classifier ($A^5/P$):
+
 </p>
 
 ## Using the code
+
+...
+
+## License
+
+...
 
 ## How to cite our work
 Please cite our work as:
