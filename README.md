@@ -12,7 +12,7 @@ In your preferred folder \<dir\>, clone the git repo, e.g.:
 
     mkdir <dir>/A5
     cd <dir>/A5
-    git clone https://github.com/NVlabs/A5.git
+    git clone git@github.com:NVlabs/A5.git
 
 ## Docker 
 
