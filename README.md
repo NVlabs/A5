@@ -8,7 +8,43 @@ Many defenses against adversarial attacks (e.g., robust classifiers, randomizati
 
 ## Getting the code
 
-To facilitate the distribution and use of the code among researchers, we suggest using docker:
+In your preferred folder \<dir\>, clone the git repo, e.g.:
+
+    mkdir <dir>/A5
+    cd <dir>/A5
+    git clone https://github.com/NVlabs/A5.git
+
+## Docker 
+
+To facilitate the distribution and use of the code among researchers, we suggest using docker. Once in the A5 folder, you should first create the docker image:
+
+    cd <dir>/A5/A5
+    cd docker
+    nvidia-docker image build -t A5 .
+    cd ..
+
+To run the docker image:
+
+    nvidia-docker run --gpus all --ipc=host --ulimit memlock=-1 --ulimit stack=67108864 -it -v <dir>/A5:/mount/A5 A5
+
+Notice that we are launching docker with a shared volume that includes the code got from git. When running docker, you can easily navigate to this folder as:
+
+    cd ~/mount/A5
+    
+From here you can launch all the $A^5$ python scripts.
+
+## Getting the datasets
+
+<p align="justify">
+To facilitate the use of the same code across different datasets, we use for all of them the webdataset format. We provide a script to convert the desired dataset into webdataset format for MNIST, CIFAR10, FashionMNIST, Tinyimagenet, and the Fonts dataset used in our CVPR paper. If you want to add more datasets, feel free to modify the convert_dataset.py script. To get help and convert (as an example) the MNIST dataset into the webdataset format used in $A^5$, you can use:
+
+    python convert_dataset.py --help
+    python convert_dataset.py --dataset-name mnist --output-folder webdataset_mnist
+
+The syntax for the other datasets is similar.
+
+</p>
+    
 
 ## Understanding the code
 
