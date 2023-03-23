@@ -45,27 +45,160 @@ The syntax for the other datasets is similar.
 
 </p>
     
-
-## Understanding the code
+## Understanding the code and the recipes
 
 <p align="justify">
-Detailed information about $A^5$ and code usage can be found in our CVPR paper. We also reccommend reading the related supplementary material for more details on the $A^5$ training recipes and the typical usage scenarios. A brief description of the recipes and usage scenarios is anyway given here.
+Detailed information about $A^5$ and code usage can be found in our CVPR paper. We also reccommend reading the related supplementary material for more details on the $A^5$ training recipes and the typical usage scenarios. A brief description of the recipes and usage scenarios is anyway given here. The general $A^5$ framework is well represented by the following schematic representation.
+</p>
 
-- Offline data robustification, known ground truth, legacy classifier ($A^5/O$):
+![](/figs/a5.png)
+___
 
-- On-the-fly data robustification, unknown ground truth, legacy classifier ($A^5/R$):
+<p align="justify">
+Generally, we use $\boldsymbol{w}$ to indicate the appearance of the physical objects, that are framed by an acquisition process $A$ to generate the images (or data) $\boldsymbol{x}$. Physical adversarial attacks are crafted by physical modification of the objects $\boldsymbol{w}$ before acquiring their image (e.g., adversarial patches). Man in the Middle (MitM) adversarial attacks are crafted while transmitting data $\boldsymbol{w}$ from the acquisition device to the classifier. The attacker can see the content within the protected blocks, but cannot modify them. We work therefore under the assumption of a white box scenario, and cover with our method black, grey or white box scenarios. Since $A^5$ uses certfied bounds, it can protect against any form of attack.
+</p>
 
-- On-the-fly data robustification, unknown ground truth, re-trained classifier ($A^5/RC$):
+<p align="justify">
+- Offline data robustification, known ground truth, legacy classifier ($A^5/O$): we use $\boldsymbol{w}$ to indicate the samples of the dataset; the acquisition block boils down to simple normalization in this case. $A^5/O$ operates by modifying (offline) the samples so that they are more robust when using the legacy classifier C. This recipe has little of no practical use, apart from establishing a solid baseline.
+  
+  ![](/figs/a5_o_training.png)
+  ![](/figs/a5_o_inference.png)
+  ___
+</p>
 
-- Offline physical object robustification, known ground truth, legacy classifier ($A^5/P$):
+<p align="justify">
+- On-the-fly data robustification, unknown ground truth, legacy classifier ($A^5/R$): at traininig time, we use $\boldsymbol{w}$ to indicate the raw samples of the dataset, and $\boldsymbol{x}$ to indicate them after normalization. A robustifier R adds defensive agumentation on top of $\boldsymbol{x}$ on-the-fly, thus it can be used in practice to protect acquired data in real time, before transmitting them to the legacy classifier C.
 
-- Offline physical object robustification, known ground truth, re-trained classifier ($A^5/P$):
+  ![](/figs/a5_r_training.png)
+  ![](/figs/a5_r_rc_inference.png)
+  ___
+</p>
 
+<p align="justify">
+- On-the-fly data robustification, unknown ground truth, re-trained classifier ($A^5/RC$): at traininig time, we use $\boldsymbol{w}$ to indicate the raw samples of the dataset, and $\boldsymbol{x}$ to indicate them after normalization. A robustifier R adds defensive agumentation on top of $\boldsymbol{x}$ on-the-fly, thus it can be used in practice to protect acquired data in real time, before transmitting them to the classifier C that has been fine tuned during training, together with R.
+
+  ![](/figs/a5_rc_training.png)
+  ![](/figs/a5_r_rc_inference.png)
+  ___
+</p>
+
+<p align="justify">
+- Offline physical object robustification, known ground truth, legacy classifier ($A^5/P$): at traininig time, we use $\boldsymbol{w}$ to indicate the appearance of the physical objects, and $\boldsymbol{x}$ to indicate their image after acquisition with A, where A is a camera acquisition procedure. The objects' apperance is changed to make them robust against MitM attack that, at inference time, may be crafted while transmitting the images to the classifier. We use the legacy classifier C.
+
+  ![](/figs/a5_p_training.png)
+  ![](/figs/a5_p_inference.png)
+</p>
+
+<p align="justify">
+- Offline physical object robustification, known ground truth, re-trained classifier ($A^5/P$): at traininig time, we use $\boldsymbol{w}$ to indicate the appearance of the physical objects, and $\boldsymbol{x}$ to indicate their image after acquisition with A, where A is a camera acquisition procedure. The objects' apperance is changed to make them robust against MitM attack that, at inference time, may be crafted while transmitting the images to the classifier. We use the a classifier C that is co-trained with $\boldsymbol{w}$.
+
+  ![](/figs/a5_pc_training.png)
+  ![](/figs/a5_pc_inference.png)
 </p>
 
 ## Using the code
 
-...
+<p align="justify">
+The script a5.py allows training a standard classifier, a robust classifier, a robustifier, or finding defensive auugmentations for physical objects or for a dataset. Training for each of these elements can be done together with the other ones, to generate different $A^5$ recipes. The syntax for a5.py is the following.
+</p>
+
+    python a5.py --help
+    usage: a5.py [-h] [--train-prototypes] [--train-robustifier]
+             [--train-classifier] [--test] [--no-autoattack]
+             [--robustifier-arch {mnist,cifar10,tinyimagenet,identity}]
+             [--acquisition-arch {identity,camera}]
+             [--classifier-arch {mnist,cifar10,tinyimagenet,fonts}]
+             [--training-dataset-folder TRAINING_DATASET_FOLDER]
+             [--validation-dataset-folder VALIDATION_DATASET_FOLDER]
+             [--test-dataset-folder TEST_DATASET_FOLDER]
+             [--prototypes-dataset-folder PROTOTYPES_DATASET_FOLDER]
+             [--batch-size BATCH_SIZE] [--epochs EPOCHS] [--lr LR]
+             [--lr-scheduler-milestones LR_SCHEDULER_MILESTONES [LR_SCHEDULER_MILESTONES ...]]
+             [--lr-scheduler-gamma LR_SCHEDULER_GAMMA]
+             [--x-epsilon-attack-scheduler-name {LinearScheduler,AdaptiveScheduler,SmoothedScheduler,FixedScheduler}]
+             [--x-epsilon-attack-scheduler-opts X_EPSILON_ATTACK_SCHEDULER_OPTS]
+             [--x-augmentation-mnist] [--x-augmentation-cifar10]
+             [--save-interval SAVE_INTERVAL]
+             [--batch-multiplier BATCH_MULTIPLIER]
+             [--test-multiplier TEST_MULTIPLIER]
+             [--load-classifier LOAD_CLASSIFIER]
+             [--load-robustifier LOAD_ROBUSTIFIER] [--log-dir LOG_DIR]
+             [--x-epsilon-attack-training X_EPSILON_ATTACK_TRAINING]
+             [--x-epsilon-attack-testing X_EPSILON_ATTACK_TESTING]
+             [--w-epsilon-attack-training W_EPSILON_ATTACK_TRAINING]
+             [--w-epsilon-attack-testing W_EPSILON_ATTACK_TESTING]
+             [--x-epsilon-defense X_EPSILON_DEFENSE]
+             [--w-epsilon-defense W_EPSILON_DEFENSE]
+             [--bound-type {IBP,CROWN-IBP,CROWN,CROWN-FAST}] [--verbose]
+
+And here is a detailed explanation of all the parameters that can be passed as input.
+
+<p align="justify">
+- [--train-prototypes] [--train-robustifier] [--train-classifier] Indicate the task for $A^5$. All of these can be used together to create different $A^5$ recipes. For instance, for $A^5/RC$, one should train a robustifier and a classifier at the same time. 
+</p>
+
+<p align="justify">
+- [--test] [--no-autoattack] The test option is used to test the trained elements on the test dataset. It can be used together with the training task, keep in mind that the test will run after training is complete. The no-autoattack option does not compute the autoattack error (faster).
+</p>
+
+<p align="justify">
+- [--robustifier-arch {mnist,cifar10,tinyimagenet,identity}] [--acquisition-arch {identity,camera}] [--classifier-arch {mnist,cifar10,tinyimagenet,fonts}] These parameters indicate the architectures of the modules in $A^5$. An identity module is a simple way of indicating that the module is not used; e.g., when traininig a simple robust classifier, the robustifier should be identity as this is not used. The architecture of the neural networks are in the /models subfolder. If one wants to add different architectures, the code has to be modified accordingly. The acquisition arch "camera" can be seen as a special form of augmentation of the physical objects $\boldsymbol{w}$ that simulates camera acquisition.
+</p>
+
+<p align="justify">
+- [--training-dataset-folder TRAINING_DATASET_FOLDER] [--validation-dataset-folder VALIDATION_DATASET_FOLDER] [--test-dataset-folder TEST_DATASET_FOLDER] [--prototypes-dataset-folder PROTOTYPES_DATASET_FOLDER] These indicate the folders with the datasets. Notice that the prototypes-dataset-folder is used to indicate a pre-trained robustified dataset, that generally lies in the logdir/w folder.
+</p>
+
+<p align="justify">
+- [--batch-size BATCH_SIZE] [--epochs EPOCHS] [--lr LR] [--lr-scheduler-milestones LR_SCHEDULER_MILESTONES [LR_SCHEDULER_MILESTONES ...]] [--lr-scheduler-gamma LR_SCHEDULER_GAMMA] [--batch-multiplier BATCH_MULTIPLIER] Training parameters. The batch multiplier is used to save GPU memory while training: the gradient is accumulated --batch-multipler times before performing the updating steps. This allow training with larger batches at minimum memory cost. It is however slower than using an equivalent larger batch.
+</p>
+
+<p align="justify">
+- [--x-epsilon-attack-scheduler-name {LinearScheduler,AdaptiveScheduler,SmoothedScheduler,FixedScheduler}] [--x-epsilon-attack-scheduler-opts X_EPSILON_ATTACK_SCHEDULER_OPTS] Training schedulers for $\epsilon$ as described in the auto_LiRPA documentation.
+</p>
+
+<p align="justify">
+- [--x-augmentation-mnist] [--x-augmentation-cifar10] use augmentation for mnist or cifar10. If other augmentation strategies are needed, they have to be added to the code.
+</p>
+
+<p align="justify">
+- [--save-interval SAVE_INTERVAL] Interval (epochs) to save the models while training.
+</p>        
+             
+<p align="justify">
+- [--test-multiplier TEST_MULTIPLIER] Increase the size of the test dataset. This is generally not used, but comes in hand when the dataset is small. For instance, when testing $A^5/P$ on the font dataset, that contains only 62 characters, this allows increasing the size of the dataset and considering different random augmentation for testing.
+</p>        
+
+<p align="justify">
+- [--load-classifier LOAD_CLASSIFIER] [--load-robustifier LOAD_ROBUSTIFIER] Load a classifier / robustifier before training or testing. Please notice that to load a defended set of physical objects one has to use --prototypes-dataset-folder.
+</p>        
+
+<p align="justify">
+- [--log-dir LOG_DIR] folder use to store the training and testing results.
+</p>        
+
+<p align="justify">
+- [--x-epsilon-attack-training X_EPSILON_ATTACK_TRAINING] [--x-epsilon-attack-testing X_EPSILON_ATTACK_TESTING] [--w-epsilon-attack-training W_EPSILON_ATTACK_TRAINING] [--w-epsilon-attack-testing W_EPSILON_ATTACK_TESTING] [--x-epsilon-defense X_EPSILON_DEFENSE] [--w-epsilon-defense W_EPSILON_DEFENSE] These are all the attack magnitudes. Please notice the correct interpretation may be a function of the adopted recipe.
+</p>        
+
+<p align="justify">
+[--bound-type {IBP,CROWN-IBP,CROWN,CROWN-FAST}] Bound type used when calling the auto_LiRPA functions.
+</p>        
+
+<p align="justify">
+- [--verbose] Mostly used for profiling.
+</p>        
+
+
+## Pretrained model
+
+<p align="justify">
+To save time and energy, our intention is to share pre-trained the models (robustifies, classifiers) mentioned in our CVPR paper to all researchers that need them. These will be published here on-demand. If you need one of our models to be made public, please send your requst to:
+</p>
+
+[ifrosio@nvidia.com](mailto:ifrosio@nvidia.com).
+
+
 
 ## License
 
