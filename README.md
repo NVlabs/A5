@@ -43,6 +43,8 @@ To facilitate the use of the same code across different datasets, we use for all
 
 The syntax for the other datasets is similar.
 
+*Important note: Each user is responsible for checking the content of datasets and the applicable licenses and determining if suitable for the intended use and applicable links before the script runs and the data is placed in the user machine.*
+
 </p>
     
 ## Understanding the code and the recipes
@@ -203,6 +205,8 @@ To save time and energy, our intention is to share pre-trained the models (robus
 ## License
 
 ...
+
+*Important note: Each user is responsible for checking the content of datasets and the applicable licenses and determining if suitable for the intended use and applicable links before the script runs and the data is placed in the user machine.*
 
 ## How to cite our work
 Please cite our work as:
