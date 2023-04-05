@@ -1,3 +1,5 @@
+# Disclaimer: each user is responsible for checking the content of datasets and the applicable licenses and determining if suitable for the intended use and applicable links before the script runs and the data is placed in the user machine.
+
 import torch
 
 def zx2x_rob(z, x, x_epsilon, xD_min, xD_max):

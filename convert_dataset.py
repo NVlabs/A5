@@ -1,3 +1,5 @@
+# Disclaimer: each user is responsible for checking the content of datasets and the applicable licenses and determining if suitable for the intended use and applicable links before the script runs and the data is placed in the user machine.
+
 import argparse, os, torch, multiprocessing, cv2
 import torchvision.datasets as datasets
 import torchvision.transforms as transforms
@@ -103,7 +105,8 @@ def main():
     s = torch.tensor([1.0])
     n = torch.tensor([10])
     names = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-  elif args.dataset_name == 'fashionmnist':
+  elif args.dataset_name == 'fashionmnist':# "Each user is responsible for checking the content of datasets and the applicable licenses and determining if suitable for the intended use) and applicable links before the script runs and the >
+
     data = datasets.FashionMNIST("./data", train=True, download=True)
     (dtrain_data, dvalidation_data) = torch.utils.data.random_split(data, [int(0.95 * len(data)), int(0.05 * len(data))], generator=torch.Generator().manual_seed(42))
     dtest_data = datasets.FashionMNIST("./data", train=False, download=True)
@@ -111,23 +114,25 @@ def main():
     s = torch.tensor([2.0])
     n = torch.tensor([10])
     names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat', 'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
-  elif args.dataset_name == 'cifar10':
-    data = datasets.CIFAR10("./data", train=True, download=True)
-    (dtrain_data, dvalidation_data) = torch.utils.data.random_split(data, [int(0.95 * len(data)), int(0.05 * len(data))], generator=torch.Generator().manual_seed(42))
-    dtest_data = datasets.CIFAR10("./data", train=False, download=True)
-    m = torch.tensor([0.4914, 0.4822, 0.4465])
-    s = torch.tensor([0.2023, 0.1994, 0.2010])
-    n = torch.tensor([10])
-    names = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
-  elif args.dataset_name == 'tinyimagenet':
-    # TODO add tinyimagenet dataset
-    #data = datasets.("./data", train=True, download=True)
-    #(dtrain_data, dvalidation_data) = torch.utils.data.random_split(data, [int(0.95 * len(data)), int(0.05 * len(data))], generator=torch.Generator().manual_seed(42))
-    #dtest_data = datasets.CIFAR10("./data", train=False, download=True)
-    #m = torch.tensor([0.4914, 0.4822, 0.4465])
-    #s = torch.tensor([0.2023, 0.1994, 0.2010])
-    #n = torch.tensor([10])
-    names = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+  # Other datasets other than mnist or fashionminst can be easily added in a similar way - e.g. as an example consider the following commented code for the cifar10 case. 
+  # Disclaimer: each user is responsible for checking the content of datasets and the applicable licenses and determining if suitable for the intended use and applicable links before the script runs and the data is placed in the user machine.
+  #elif args.dataset_name == 'cifar10':
+  #  data = datasets.CIFAR10("./data", train=True, download=True)
+  #  (dtrain_data, dvalidation_data) = torch.utils.data.random_split(data, [int(0.95 * len(data)), int(0.05 * len(data))], generator=torch.Generator().manual_seed(42))
+  #  dtest_data = datasets.CIFAR10("./data", train=False, download=True)
+  #  m = torch.tensor([0.4914, 0.4822, 0.4465])
+  #  s = torch.tensor([0.2023, 0.1994, 0.2010])
+  #  n = torch.tensor([10])
+  #  names = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+  #elif args.dataset_name == 'tinyimagenet':
+  #  # TODO add tinyimagenet dataset
+  #  #data = datasets.("./data", train=True, download=True)
+  #  #(dtrain_data, dvalidation_data) = torch.utils.data.random_split(data, [int(0.95 * len(data)), int(0.05 * len(data))], generator=torch.Generator().manual_seed(42))
+  #  #dtest_data = datasets.CIFAR10("./data", train=False, download=True)
+  #  #m = torch.tensor([0.4914, 0.4822, 0.4465])
+  #  #s = torch.tensor([0.2023, 0.1994, 0.2010])
+  #  #n = torch.tensor([10])
+  #  #names = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
   elif args.dataset_name == 'fonts':
     dtrain_data = FontDataset("./fonts")
     dvalidation_data = FontDataset("./fonts")
